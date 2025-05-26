@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            margin: auto;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        label {
+            flex: 1;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, #2c3e50);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>House Price Prediction</h1>
+        <div class="form-group"><label>Bedrooms:</label> <input type="number" id="bedrooms"> <label>Bathrooms:</label> <input type="number" id="bathrooms"></div>
+        <div class="form-group"><label>Sqft Living:</label> <input type="number" id="sqft_living"> <label>Sqft Lot:</label> <input type="number" id="sqft_lot"></div>
+        <div class="form-group"><label>Floors:</label> <input type="number" id="floors"> <label>Waterfront:</label> <input type="number" id="waterfront"></div>
+        <div class="form-group"><label>View:</label> <input type="number" id="view"> <label>Condition:</label> <input type="number" id="condition"></div>
+        <div class="form-group"><label>Grade:</label> <input type="number" id="grade"> <label>Sqft Above:</label> <input type="number" id="sqft_above"></div>
+        <div class="form-group"><label>Sqft Basement:</label> <input type="number" id="sqft_basement"> <label>Year Built:</label> <input type="number" id="yr_built"></div>
+        <div class="form-group"><label>Year Renovated:</label> <input type="number" id="yr_renovated"> <label>Zipcode:</label> <input type="number" id="zipcode"></div>
+        <div class="form-group"><label>Latitude:</label> <input type="number" step="any" id="lat"> <label>Longitude:</label> <input type="number" step="any" id="long"></div>
+        <div class="form-group"><label>Sqft Living 15:</label> <input type="number" id="sqft_living15"> <label>Sqft Lot 15:</label> <input type="number" id="sqft_lot15"></div>
+        <button onclick="predictPrice()">Predict</button>
+        <h2 id="result"></h2>
+    </div>
+    <script>
+        async function predictPrice() {
+            const formData = {
+                bedrooms: parseFloat(document.getElementById("bedrooms").value) || 0,
+                bathrooms: parseFloat(document.getElementById("bathrooms").value) || 0,
+                sqft_living: parseFloat(document.getElementById("sqft_living").value) || 0,
+                sqft_lot: parseFloat(document.getElementById("sqft_lot").value) || 0,
+                floors: parseFloat(document.getElementById("floors").value) || 0,
+                waterfront: parseInt(document.getElementById("waterfront").value) || 0,
+                view: parseInt(document.getElementById("view").value) || 0,
+                condition: parseInt(document.getElementById("condition").value) || 0,
+                grade: parseInt(document.getElementById("grade").value) || 0,
+                sqft_above: parseFloat(document.getElementById("sqft_above").value) || 0,
+                sqft_basement: parseFloat(document.getElementById("sqft_basement").value) || 0,
+                yr_built: parseInt(document.getElementById("yr_built").value) || 0,
+                yr_renovated: parseInt(document.getElementById("yr_renovated").value) || 0,
+                zipcode: parseInt(document.getElementById("zipcode").value) || 0,
+                lat: parseFloat(document.getElementById("lat").value) || 0,
+                long: parseFloat(document.getElementById("long").value) || 0,
+                sqft_living15: parseFloat(document.getElementById("sqft_living15").value) || 0,
+                sqft_lot15: parseFloat(document.getElementById("sqft_lot15").value) || 0
+            };
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (result.predicted_price !== undefined) {
+                document.getElementById("result").innerText = "Predicted Price: $" + result.predicted_price.toFixed(2);
+            } else {
+                document.getElementById("result").innerText = "Error: " + (result.error || "Invalid response");
+            }
+        }
+    </script>
+</body>
+</html>
